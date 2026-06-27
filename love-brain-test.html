@@ -1,0 +1,488 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>恋爱脑等级测试</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:linear-gradient(135deg,#fce4ec 0%,#f8bbd0 50%,#e8aebf 100%);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.container{
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(10px);
+  border-radius:24px;
+  padding:32px 24px;
+  max-width:480px;
+  width:100%;
+  box-shadow:0 8px 40px rgba(233,30,99,0.15);
+  position:relative;
+  overflow:hidden;
+}
+.container::before{
+  content:"";
+  position:absolute;
+  top:-60px;right:-60px;
+  width:150px;height:150px;
+  border-radius:50%;
+  background:rgba(233,30,99,0.06);
+  pointer-events:none;
+}
+.container::after{
+  content:"";
+  position:absolute;
+  bottom:-80px;left:-80px;
+  width:200px;height:200px;
+  border-radius:50%;
+  background:rgba(233,30,99,0.04);
+  pointer-events:none;
+}
+.header{
+  text-align:center;
+  margin-bottom:28px;
+  position:relative;
+  z-index:1;
+}
+.header h1{
+  font-size:28px;
+  color:#c2185b;
+  font-weight:700;
+  letter-spacing:2px;
+}
+.header .sub{
+  font-size:14px;
+  color:#ad1457;
+  opacity:0.7;
+  margin-top:6px;
+}
+.progress-bar{
+  width:100%;
+  height:6px;
+  background:#f3e5f5;
+  border-radius:3px;
+  margin-bottom:24px;
+  overflow:hidden;
+  position:relative;
+  z-index:1;
+}
+.progress-bar .fill{
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,#ec407a,#c2185b);
+  border-radius:3px;
+  transition:width 0.4s ease;
+}
+.progress-text{
+  text-align:right;
+  font-size:12px;
+  color:#ad1457;
+  opacity:0.6;
+  margin-top:4px;
+}
+.question-area{
+  min-height:320px;
+  position:relative;
+  z-index:1;
+}
+.question-card{
+  display:none;
+  animation:fadeIn 0.35s ease;
+}
+.question-card.active{
+  display:block;
+}
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(12px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.q-number{
+  font-size:13px;
+  color:#c2185b;
+  font-weight:600;
+  margin-bottom:4px;
+}
+.q-title{
+  font-size:17px;
+  font-weight:600;
+  color:#333;
+  line-height:1.6;
+  margin-bottom:20px;
+}
+.options{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.option-label{
+  display:flex;
+  align-items:center;
+  padding:14px 16px;
+  border:2px solid #f3e5f5;
+  border-radius:14px;
+  cursor:pointer;
+  transition:all 0.25s ease;
+  background:#fff;
+  position:relative;
+}
+.option-label:hover{
+  border-color:#f48fb1;
+  background:#fce4ec;
+}
+.option-label input[type="radio"]{
+  display:none;
+}
+.option-label .radio-circle{
+  width:20px;height:20px;
+  border-radius:50%;
+  border:2px solid #e0e0e0;
+  flex-shrink:0;
+  margin-right:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all 0.25s ease;
+}
+.option-label .radio-circle::after{
+  content:"";
+  width:10px;height:10px;
+  border-radius:50%;
+  background:transparent;
+  transition:all 0.25s ease;
+}
+.option-label input[type="radio"]:checked + .radio-circle{
+  border-color:#e91e63;
+}
+.option-label input[type="radio"]:checked + .radio-circle::after{
+  background:#e91e63;
+}
+.option-label input[type="radio"]:checked ~ .option-text{
+  color:#c2185b;
+  font-weight:600;
+}
+.option-label:has(input[type="radio"]:checked){
+  border-color:#e91e63;
+  background:#fce4ec;
+}
+.option-text{
+  font-size:15px;
+  color:#555;
+  transition:color 0.25s ease;
+  line-height:1.4;
+}
+.option-tag{
+  font-size:12px;
+  color:#e91e63;
+  font-weight:600;
+  margin-right:8px;
+  opacity:0.6;
+}
+.nav-buttons{
+  display:flex;
+  gap:12px;
+  margin-top:24px;
+  position:relative;
+  z-index:1;
+}
+.btn{
+  flex:1;
+  padding:14px 0;
+  border:none;
+  border-radius:14px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.25s ease;
+}
+.btn-prev{
+  background:#f3e5f5;
+  color:#c2185b;
+}
+.btn-prev:hover:not(:disabled){
+  background:#e1bee7;
+}
+.btn-next{
+  background:linear-gradient(135deg,#ec407a,#c2185b);
+  color:#fff;
+  box-shadow:0 4px 15px rgba(233,30,99,0.3);
+}
+.btn-next:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 6px 20px rgba(233,30,99,0.4);
+}
+.btn:disabled{
+  opacity:0.4;
+  cursor:not-allowed;
+  transform:none !important;
+}
+.btn-submit{
+  background:linear-gradient(135deg,#ec407a,#c2185b);
+  color:#fff;
+  box-shadow:0 4px 15px rgba(233,30,99,0.3);
+}
+.btn-submit:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 6px 20px rgba(233,30,99,0.4);
+}
+/* Result */
+.result-area{
+  display:none;
+  text-align:center;
+  padding:20px 0;
+  position:relative;
+  z-index:1;
+  animation:fadeIn 0.5s ease;
+}
+.result-area.show{display:block;}
+.result-icon{font-size:48px;margin-bottom:8px;}
+.result-level{
+  font-size:24px;
+  font-weight:700;
+  color:#c2185b;
+  margin-bottom:4px;
+}
+.result-score{
+  font-size:15px;
+  color:#888;
+  margin-bottom:14px;
+}
+.result-score span{
+  font-size:40px;
+  font-weight:800;
+  color:#e91e63;
+}
+.result-desc{
+  font-size:15px;
+  color:#555;
+  line-height:1.8;
+  background:#fce4ec;
+  padding:16px;
+  border-radius:14px;
+  margin-bottom:20px;
+}
+.result-level-sub{
+  font-size:14px;
+  color:#ad1457;
+  opacity:0.7;
+  margin-bottom:12px;
+}
+.btn-restart{
+  background:linear-gradient(135deg,#ec407a,#c2185b);
+  color:#fff;
+  padding:14px 40px;
+  border:none;
+  border-radius:14px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.25s ease;
+  box-shadow:0 4px 15px rgba(233,30,99,0.3);
+}
+.btn-restart:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 20px rgba(233,30,99,0.4);
+}
+.footer-hint{
+  text-align:center;
+  font-size:12px;
+  color:#aaa;
+  margin-top:16px;
+  position:relative;
+  z-index:1;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>💕 恋爱脑等级测试</h1>
+    <div class="sub">测测你的恋爱脑指数有多高</div>
+  </div>
+  <div class="progress-bar" id="progressBar"><div class="fill" id="progressFill"></div></div>
+  <div class="progress-text" id="progressText">1 / 10</div>
+
+  <div class="question-area" id="questionArea"></div>
+
+  <div class="result-area" id="resultArea">
+    <div class="result-icon" id="resultIcon">🥰</div>
+    <div class="result-level" id="resultLevel"></div>
+    <div class="result-level-sub" id="resultLevelSub"></div>
+    <div class="result-score">得分：<span id="resultScore">0</span></div>
+    <div class="result-desc" id="resultDesc"></div>
+    <button class="btn-restart" onclick="restart()">🔄 重新测试</button>
+  </div>
+
+  <div class="nav-buttons" id="navButtons">
+    <button class="btn btn-prev" id="btnPrev" disabled>← 上一题</button>
+    <button class="btn btn-next" id="btnNext">下一题 →</button>
+  </div>
+
+  <div class="footer-hint">恋爱脑自测 · 仅供娱乐参考</div>
+</div>
+
+<script>
+const questions = [
+  {q:"对方临时爽约你的重要安排，你的第一反应？",opts:["立刻调整自己计划，无所谓迁就对方","有点难过，但还是会主动询问对方原因","心里生气，但不敢直接表达不满","疯狂胡思乱想，不停发消息追问对方"]},
+  {q:"吵架之后，一般是谁先低头道歉？",opts:["永远是我主动破冰，不管对错","大部分时候我会先缓和气氛","僵持一段时间，对方哄我才会和好","坚持原则，绝不主动低头"]},
+  {q:"对方提出不合理的要求，你会？",opts:["几乎都会无条件答应","纠结一阵之后大多妥协","会商量折中方案，不合理就拒绝","直接拒绝，坚持自己的底线"]},
+  {q:"恋爱后，你会主动放弃自己的爱好、社交圈子吗？",opts:["会，围着对方的生活转","会适当减少自己的社交时间","保留大部分自己的生活节奏","完全不会，个人生活永远优先"]},
+  {q:"对方忽冷忽热不回消息，你会？",opts:["疯狂自我反省是不是自己做错了","心里焦虑，反复翻看聊天记录","该干嘛干嘛，等对方主动解释","直接沟通，不解决就及时止损"]},
+  {q:"你会为了对方，牺牲自己的学习/工作机会吗？",opts:["只要对方需要，愿意立刻放弃","会认真纠结，大概率选择妥协","权衡利弊，不会轻易牺牲核心利益","绝对不会，个人发展永远第一位"]},
+  {q:"对方随口一句负面评价，你会？",opts:["牢牢记住，反复自我怀疑","会难过一阵子，慢慢调整心态","有则改之，无则不在意","直接反驳，坚持自我认知"]},
+  {q:"明知道这段感情内耗严重，你会？",opts:["舍不得分开，一直自我麻痹坚持","抱有幻想，觉得对方会改变","观察一段时间，不行就抽身离开","立刻果断止损，及时分手"]},
+  {q:"花钱方面，你会习惯性为对方大额付出吗？",opts:["主动大额开销，优先满足对方","日常经常主动请客送礼","礼尚往来，互相持平开销","各花各的，不会单方面大额付出"]},
+  {q:"你是否会把恋爱当成生活的全部重心？",opts:["是的，生活一切围绕感情展开","感情占生活很大一部分比重","感情只是生活的一部分","恋爱只是调剂，个人生活为主"]}
+];
+const labels = ["A","B","C","D"];
+let current = 0;
+let answers = new Array(questions.length).fill(-1);
+
+function renderQuestion(idx){
+  const area = document.getElementById("questionArea");
+  const q = questions[idx];
+  let html = '<div class="question-card active">';
+  html += '<div class="q-number">第 ' + (idx+1) + ' 题</div>';
+  html += '<div class="q-title">' + q.q + '</div>';
+  html += '<div class="options">';
+  q.opts.forEach(function(opt,oi){
+    var checked = answers[idx]===oi ? 'checked' : '';
+    html += '<label class="option-label">';
+    html += '<input type="radio" name="q' + idx + '" value="' + oi + '" ' + checked + ' onchange="selectOption(' + idx + ',' + oi + ')">';
+    html += '<div class="radio-circle"></div>';
+    html += '<span class="option-tag">' + labels[oi] + '.</span>';
+    html += '<span class="option-text">' + opt + '</span>';
+    html += '</label>';
+  });
+  html += '</div></div>';
+  area.innerHTML = html;
+  updateProgress(idx);
+  updateButtons(idx);
+}
+
+function selectOption(qIdx,val){
+  answers[qIdx]=val;
+}
+
+function updateProgress(idx){
+  document.getElementById("progressFill").style.width = ((idx+1)/questions.length*100)+"%";
+  document.getElementById("progressText").textContent = (idx+1) + " / " + questions.length;
+}
+
+function updateButtons(idx){
+  var prev = document.getElementById("btnPrev");
+  var next = document.getElementById("btnNext");
+  prev.disabled = idx===0;
+  if(idx===questions.length-1){
+    next.textContent = "📊 提交测试";
+    next.className = "btn btn-submit";
+    next.onclick = submitTest;
+  }else{
+    next.textContent = "下一题 →";
+    next.className = "btn btn-next";
+    next.onclick = goNext;
+  }
+}
+
+function goNext(){
+  if(answers[current]===-1){
+    shakeBtn();
+    return;
+  }
+  if(current<questions.length-1){
+    current++;
+    renderQuestion(current);
+  }
+}
+
+function goPrev(){
+  if(current>0){
+    current--;
+    renderQuestion(current);
+  }
+}
+
+function shakeBtn(){
+  var btn = document.getElementById("btnNext");
+  btn.style.animation = "shake 0.4s ease";
+  setTimeout(function(){btn.style.animation="";},400);
+}
+
+// Inject shake keyframe
+var shakeStyle = document.createElement("style");
+shakeStyle.textContent = "@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}";
+document.head.appendChild(shakeStyle);
+
+function submitTest(){
+  // Check all answered
+  for(var i=0;i<answers.length;i++){
+    if(answers[i]===-1){
+      current=i;
+      renderQuestion(i);
+      shakeBtn();
+      return;
+    }
+  }
+  // Calculate
+  var total = answers.reduce(function(sum,v){return sum+(v+1);},0);
+  var level,icon,desc,sub;
+  if(total>=10 && total<=17){
+    level = "清醒独立型";
+    icon = "🧠";
+    sub = "恋爱脑指数 ★☆☆☆☆";
+    desc = "你几乎不被恋爱脑困扰，理性是你最大的武器。感情中你始终保有自我边界，不容易被情绪牵着走。继续保持，你的清醒是最大的魅力！";
+  }else if(total>=18 && total<=25){
+    level = "轻度恋爱脑";
+    icon = "😊";
+    sub = "恋爱脑指数 ★★☆☆☆";
+    desc = "你偶尔会为感情上头，但大多数时候能保持理性判断。谈恋爱时你会投入，却不至于迷失自我。适当感性是甜蜜的调味剂哦～";
+  }else if(total>=26 && total<=33){
+    level = "中度恋爱脑";
+    icon = "😰";
+    sub = "恋爱脑指数 ★★★☆☆";
+    desc = "你很容易为感情妥协让步，经常陷入情绪内耗。你害怕失去，所以习惯性委屈自己。试着多爱自己一点，你值得被好好对待！";
+  }else{
+    level = "重度恋爱脑";
+    icon = "💔";
+    sub = "恋爱脑指数 ★★★★☆";
+    desc = "你极易在爱情中失去自我，把对方当成了全世界。请记住：真正健康的爱是双向奔赴，不是单方面讨好。从现在开始，把重心放回自己身上吧！";
+  }
+  // Show result
+  document.getElementById("questionArea").style.display = "none";
+  document.getElementById("navButtons").style.display = "none";
+  document.getElementById("progressBar").style.display = "none";
+  document.getElementById("progressText").style.display = "none";
+  document.getElementById("resultIcon").textContent = icon;
+  document.getElementById("resultLevel").textContent = level;
+  document.getElementById("resultLevelSub").textContent = sub;
+  document.getElementById("resultScore").textContent = total;
+  document.getElementById("resultDesc").textContent = desc;
+  document.getElementById("resultArea").classList.add("show");
+}
+
+function restart(){
+  answers = new Array(questions.length).fill(-1);
+  current = 0;
+  document.getElementById("resultArea").classList.remove("show");
+  document.getElementById("questionArea").style.display = "block";
+  document.getElementById("navButtons").style.display = "flex";
+  document.getElementById("progressBar").style.display = "block";
+  document.getElementById("progressText").style.display = "block";
+  var next = document.getElementById("btnNext");
+  next.textContent = "下一题 →";
+  next.className = "btn btn-next";
+  next.onclick = goNext;
+  renderQuestion(0);
+}
+
+// Init
+document.getElementById("btnPrev").addEventListener("click",goPrev);
+renderQuestion(0);
+</script>
+</body>
+</html>
